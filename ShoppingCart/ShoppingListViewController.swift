@@ -8,15 +8,23 @@
 
 import UIKit
 
+//Create a protocol called EmojiCreation. In your implementation of this protocol should be one requirement. A function called create(emojiGroup:) that takes in one argument called emojiGroup of type (String, String).
 
-// TODO: Create protocol here.
+protocol EmojiCreation {
+    
+    func create(emojiGroup:(String, String))
+}
 
 
 class ShoppingViewController: UIViewController {
     
     @IBOutlet weak var tableView: UITableView!
     
-    var emojis: [(String, String)] = []
+    var emojis: [(String, String)] = [] {
+        didSet {
+            self.tableView.reloadData()
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +35,10 @@ class ShoppingViewController: UIViewController {
         tableView.allowsSelection = false
     }
     
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?){
+        let destVC = segue.destination as! EmojiSelectionViewController
+        destVC.emojiDelegate = self
+    }
 }
 
 // MARK: - UITableViewDataSource Methods
@@ -45,8 +57,16 @@ extension ShoppingViewController: UITableViewDataSource {
     }
 }
 
+
+
 // MARK: - UITableViewDelegate Methods
-extension ShoppingViewController: UITableViewDelegate { }
+extension ShoppingViewController: UITableViewDelegate, EmojiCreation {
+
+    func create(emojiGroup:(String, String)) {
+        self.emojis.append(emojiGroup)
+        self.tableView.reloadData()
+    }
+}
 
 
 
